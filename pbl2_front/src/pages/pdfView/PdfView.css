@@ -1,0 +1,93 @@
+.pdf-view-container {
+  flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 25px;
+  padding-top: 20px;
+  overflow-y: auto;
+}
+
+.pdf-header {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  margin-bottom: 20px; 
+  margin-right:10px;
+}
+
+.pdf-header h2 {
+  font-size: 30px; 
+  font-weight: 700; 
+  color: #333;
+  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  word-break: keep-all;
+}
+
+.pdf-frame {
+  width: 98%;
+  min-height: 530px;
+  border: 1px solid #ccc;
+  margin-top: 20px; 
+}
+
+.download-button-p {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #51e0c4;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 7px;
+  font-weight: bold;
+  white-space: nowrap; 
+}
+
+.download-button-p:hover {
+  background-color: #3cc7a9 
+}
+
+.download-icon {
+  margin-right: 8px; 
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .pdf-view-container {
+        padding-left: 15px; 
+        padding-right: 15px; 
+        padding-top: 15px;
+    }
+
+    .pdf-header {
+        flex-direction: column; 
+        align-items: flex-start;
+        margin-right: 0; 
+        margin-bottom: 25px; 
+    }
+
+    .pdf-header h2 {
+        margin-bottom: 15px;
+        text-align: left; 
+    }
+
+    .download-button-p {
+        width: 90%; 
+        max-width: 300px; 
+        padding: 12px 15px; 
+        font-size: 16px; 
+        text-align: center; 
+        margin: 0 auto;
+    }
+
+    .download-icon {
+        font-size: 18px; 
+    }
+
+    .pdf-frame {
+        width: 100%; 
+        min-height: 400px; 
+        margin-top: 10px; 
+    }
+}

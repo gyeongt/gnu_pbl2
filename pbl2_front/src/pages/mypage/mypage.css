@@ -1,0 +1,408 @@
+.mypage-content {
+    flex-grow: 1;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box; 
+  padding-left: 25px;
+  padding-top: 20px;
+  overflow-y: auto; 
+  
+}
+
+.mypage-content h1 {
+    font-size: 30px; 
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* 상단 버튼 섹션 */
+.mypage-top-buttons {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.mypage-edit-button,
+.mypage-save-button {
+    background-color: #51E0C4; 
+    color: #fff;
+    border: none;
+    padding: 10px 15px; 
+    border-radius: 7px; 
+    font-size: 20px; 
+    cursor: pointer;
+    transition: background-color 0.2s ease; 
+    margin-right:20px;
+}
+
+.mypage-edit-button:hover,
+.mypage-save-button:hover {
+    background-color: #3cc7a9;
+}
+
+/* 폼 테이블 스타일 */
+.mypage-form-table {
+    margin-top: 10px;
+
+    width: 100%;
+    max-width: 800px;    
+    margin-left: auto;
+    margin-right: auto; 
+    box-sizing: border-box;
+}
+
+.mypage-form-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+
+    width: 100%; 
+}
+
+.mypage-form-label { /*이름이메일이런이름*/
+    flex: 0 0 150px; /* 라벨 너비 고정 */
+    font-weight: 600;
+    color: #555;
+    font-size: 1.05em;
+}
+
+.mypage-form-input {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mypage-form-input input[type="text"],
+.mypage-form-input input[type="password"] {
+    width: 80%;
+    max-width: 700px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+}
+
+.mypage-form-input input[type="text"]:focus,
+.mypage-form-input input[type="password"]:focus
+.mypage-password-input-wrapper:focus {
+    border-color: #ccc;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.mypage-password-input-wrapper {
+    position: relative;
+    width: 80%; 
+    max-width: 700px; 
+}
+
+.mypage-password-toggle-main {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    padding: 0; 
+    line-height: 1; 
+}
+
+.mypage-password-toggle-main:hover {
+    color: #333; 
+}
+
+
+.mypage-form-input input[disabled] {
+    background-color: #f9f9f9;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* 토글 스위치 (마케팅 정보 수신) */
+.mypage-toggle-row {
+    align-items: flex-start; 
+}
+
+.mypage-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-top: 5px; 
+}
+
+.mypage-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mypage-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.mypage-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.mypage-toggle-switch input:checked + .mypage-toggle-slider {
+    background-color: #51E0C4;
+}
+
+.mypage-toggle-switch input:focus + .mypage-toggle-slider {
+    box-shadow: 0 0 1px #51E0C4;
+}
+
+.mypage-toggle-switch input:checked + .mypage-toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.mypage-toggle-switch input:disabled + .mypage-toggle-slider {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+}
+
+.mypage-toggle-switch input:disabled + .mypage-toggle-slider:before {
+    background-color: #f0f0f0;
+}
+
+/*탈퇴버튼*/
+.mypage-fixed-withdraw {
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; 
+    margin-top: 5px;
+    padding-top: 10px;
+    width: 96%; 
+    box-sizing: border-box; 
+}
+
+.mypage-withdraw-button {
+    background: none;
+    color: #999; 
+    border: none; 
+    padding: 0; 
+    cursor: pointer;
+    font-size: 16px; 
+    text-decoration: none; 
+    transition: color 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+.mypage-withdraw-button:hover {
+    color: #777; 
+    text-decoration: underline;
+    text-decoration-color: #777; 
+    text-underline-offset: 4px; 
+}
+
+/* 모달 스타일 */
+.mypage-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.mypage-modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 7px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+}
+
+.mypage-modal-content p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: #333;
+    word-break: keep-all;
+}
+
+.mypage-modal-content input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.mypage-modal-actions button {
+    padding:5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    font-weight: bold;
+    background-color: #51E0C4;
+    color: #fff; 
+    border: none;
+    margin-top:15px;
+}
+
+.mypage-modal-actions button:hover {
+  background-color: #3cc7a9;
+}
+
+.mypage-modal-actions button:last-child {
+  color: #ccc; 
+  border: 1px solid #ccc; 
+  background-color: transparent;
+  margin-left:10px;
+}
+
+.mypage-modal-actions button:last-child:hover {
+  color: #fff; 
+  background-color: #ccc;
+}
+
+/* 비밀번호 입력창 wrapper */
+.mypage-password-wrapper {
+  position: relative;
+}
+
+.mypage-password-input {
+  width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.mypage-password-toggle-button {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+
+    .mypage-edit-button,
+    .mypage-save-button {
+        width: 100%; 
+        max-width: 300px; 
+        margin-right: 0; 
+    }
+
+    .mypage-form-table {
+        padding: 0 10px; 
+        margin-left: auto; 
+        margin-right: auto; 
+        width: 100%; 
+        max-width: none; 
+    }
+
+    .mypage-form-row {
+        flex-direction: column; 
+        align-items: flex-start;
+        padding: 10px 0; 
+    }
+
+    .mypage-form-label {
+        width: 100%; 
+        flex: none; 
+        margin-bottom: 8px;
+        font-size: 1.1em; 
+        text-align: left; 
+    }
+
+    .mypage-form-input {
+        width: 100%; 
+        flex: none; 
+    }
+
+    .mypage-form-input input[type="text"],
+    .mypage-form-input input[type="password"]
+    .mypage-password-input-wrapper {
+        width: 100%; 
+        max-width: none; 
+        font-size: 1em; 
+        padding: 12px; 
+    }
+
+    .mypage-password-input-wrapper{
+        position: relative;
+    }
+
+    .mypage-password-wrapper {
+        width: 100%; 
+        max-width: none; 
+    }
+
+    .mypage-password-input {
+        width: 100%; 
+    }
+    
+    .mypage-password-toggle-button {
+        right: 15px; 
+        font-size: 20px; 
+    }
+
+    .mypage-content {
+        padding-left: 15px; 
+        padding-right: 15px; 
+        padding-top: 20px; 
+    }
+
+    .mypage-modal-content {
+        width: 70%; 
+        padding: 25px 20px; 
+    }
+    .mypage-modal-actions button {
+        width: calc(50% - 10px); 
+        padding: 10px 5px; 
+        font-size: 15px;
+        margin-top: 15px;
+    }
+    .mypage-modal-actions button:first-child {
+        margin-right: 15px; 
+        margin-left: 0;
+    }
+    .mypage-modal-actions button:last-child {
+        margin-left: 0;
+    }
+
+}

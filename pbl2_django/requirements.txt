@@ -1,0 +1,16 @@
+Django>=4.2
+djangorestframework
+openai-whisper
+ffmpeg-python
+torch>=2.5.1
+numpy
+python-dotenv
+gaze_tracking
+opencv-python==4.11.0.86
+dlib
+transformers
+scikit-learn
+aiokafka
+moviepy
+librosa
+aiohttp

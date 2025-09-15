@@ -1,0 +1,76 @@
+name: ci/cd pbl2
+
+on:
+  push:
+    branches:
+      - "main"
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'warning'
+      tags:
+        description: 'dispatch'
+
+jobs:
+  cicd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+
+      - name: Upload 코드 파일 전송
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
+          source: "."
+          target: "/home/bgt/pbl2/fe"
+
+
+      - name: env.js 생성
+        run: |
+          echo 'window._env_ = {' > env.js
+          echo '  REACT_APP_BASE_URL: "${{ secrets.REACT_APP_API_BASE_URL }}",' >> env.js
+          echo '  REACT_APP_BOOTPAY_WEB_APPLICATION_ID: "${{ secrets.REACT_APP_BOOTPAY_WEB_APPLICATION_ID }}"' >> env.js
+          echo '}' >> env.js
+
+
+      - name: Upload env.js to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
+          source: "env.js"
+          target: "/home/bgt/pbl2/fe/public/"
+
+      - name: Build & Deploy 실행
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
+          timeout: 600s
+          command_timeout: 600s
+          script: |
+            set -ex
+
+            cd /home/bgt/pbl2/fe
+            npm install
+            npm run build
+
+            docker exec pbl2-nginx rm -rf /usr/share/nginx/html/*
+            
+            docker cp build/. pbl2-nginx:/usr/share/nginx/html/
+            
+            docker restart pbl2-nginx
+            
+            docker exec pbl2-nginx ls -al /usr/share/nginx/html/

@@ -1,0 +1,150 @@
+name: ci/cd pbl2
+
+on:
+  push:
+    branches:
+      - "main"
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'warning'
+      tags:
+        description: 'dispatch'
+
+jobs:
+  cicd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-be:latest
+
+      - name: Build Nginx Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx  # Nginx Dockerfile 위치
+          file: ./nginx/Dockerfile  # Nginx Dockerfile 지정
+          platforms: linux/amd64
+          push: true  # 빌드한 이미지를 DockerHub로 푸시
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/pbl2-nginx:latest
+
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+        
+      - name: Copy app.compose.yml
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
+          ./app.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
+
+
+      - name: Copy monitoring.compose.yml
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
+          ./monitoring.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/monitoring
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
+
+      - name: Copy prometheus.yml
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
+          ./monitoring/prometheus.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/monitoring
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
+
+      - name: Copy kafka.compose.yml
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
+          ./kafka.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/kafka
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
+
+
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST_PBL2 }}
+          username: ${{ secrets.SSH_USERNAME_PBL2 }}
+          password: ${{ secrets.SSH_PASSWORD_PBL2 }}
+          port: ${{ secrets.SSH_PORT_PBL2 }}
+          timeout: 600s
+          command_timeout: 600s
+          debug: true
+          script: |
+            set -ex  # 에러 발생 시 즉시 종료 + 실행된 명령어 로그 출력
+            
+            touch /home/bgt/pbl2/.env
+
+            # 환경 변수 저장
+            echo "DB_URL_PBL2=${{ secrets.DB_URL_PBL2 }}" > /home/bgt/pbl2/.env
+            echo "DB_USER_NAME_PBL2=${{ secrets.DB_USER_NAME_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "DB_PASSWORD_PBL2=${{ secrets.DB_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "REDIS_HOST_PBL2=${{ secrets.REDIS_HOST_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "REDIS_PORT_PBL2=${{ secrets.REDIS_PORT_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSH_USERNAME_PBL2=${{ secrets.SSH_USERNAME_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSH_PORT_PBL2=${{ secrets.SSH_PORT_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSH_PASSWORD_PBL2=${{ secrets.SSH_PASSWORD_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSH_HOST_PBL2=${{ secrets.SSH_HOST_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "SSL_CERTIFICATE_PATH=${{ secrets.SSL_CERTIFICATE_PATH }}" >> /home/bgt/pbl2/.env
+            echo "JWT_TOKEN_PBL_2=${{ secrets.JWT_TOKEN_PBL_2 }}" >> /home/bgt/pbl2/.env
+            echo "JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env
+            echo "JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}" >> /home/bgt/pbl2/.env
+            echo "FIREBASE_PROJECT_ID_PBL2=${{ secrets.FIREBASE_PROJECT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "FIREBASE_PRIVATE_KEY_ID_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "FIREBASE_PRIVATE_KEY_PBL2=${{ secrets.FIREBASE_PRIVATE_KEY_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "FIREBASE_CLIENT_EMAIL_PBL2=${{ secrets.FIREBASE_CLIENT_EMAIL_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "FIREBASE_CLIENT_ID_PBL2=${{ secrets.FIREBASE_CLIENT_ID_PBL2 }}" >> /home/bgt/pbl2/.env
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> /home/bgt/pbl2/.env
+            echo "DJANGO_BASE_URL=${{ secrets.DJANGO_BASE_URL }}" >> /home/bgt/pbl2/.env
+            echo "MY_MAIL_USERNAME=${{ secrets.MY_MAIL_USERNAME }}" >> /home/bgt/pbl2/.env
+            echo "MY_MAIL_PASSWORD=${{ secrets.MY_MAIL_PASSWORD }}" >> /home/bgt/pbl2/.env
+            chmod 600 /home/bgt/pbl2/.env
+            
+            
+            # 모니터링 환경변수
+            touch /home/bgt/monitoring/.env
+            
+            echo "GF_SECURITY_ADMIN_USER=${{ secrets.GF_SECURITY_ADMIN_USER }}" > /home/bgt/monitoring/.env
+            echo "GF_SECURITY_ADMIN_PASSWORD=${{ secrets.GF_SECURITY_ADMIN_PASSWORD }}" >> /home/bgt/monitoring/.env
+            echo "GF_SERVER_ROOT_URL=${{ secrets.GF_SERVER_ROOT_URL }}" >> /home/bgt/monitoring/.env
+            chmod 600 /home/bgt/monitoring/.env
+
+            # DockerHub 로그인
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+            
+            # Docker 네트워크 생성 (없으면 생성)
+            docker network create mojadol-network || true
+
+            # docker-compose로 다운 & 업
+            docker compose -f /home/bgt/pbl2/app.compose.yml \
+            -f /home/bgt/monitoring/monitoring.compose.yml \
+            -f /home/bgt/kafka/kafka.compose.yml down -v --remove-orphans
+  
+            docker compose --env-file /home/bgt/monitoring/.env -f /home/bgt/monitoring/monitoring.compose.yml up -d --pull always --force-recreate
+            docker compose --env-file /home/bgt/pbl2/.env -f /home/bgt/pbl2/app.compose.yml up -d --pull always --force-recreate
+            docker compose -f /home/bgt/kafka/kafka.compose.yml up -d --pull always --force-recreate
+
+
